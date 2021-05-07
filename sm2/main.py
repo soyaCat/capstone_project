@@ -12,6 +12,7 @@ import random
 import CustomFuncionFor_mlAgent as CF
 from PIL import Image
 from tqdm import tqdm
+import cv2
 
 game = "robot_camera_simu.exe"
 env_path = "./build/" + game
@@ -53,6 +54,15 @@ if __name__ == '__main__':
         actionTuple = ConversionDataType.ConvertList2DiscreteAction(action, behavior_name)
         env.set_actions(behavior_name, actionTuple)
         env.step()
+    x = 100;
+    y = 100;
+    w = 100;
+    h = 100
+    cv2.rectangle(vis_observation_list[0], (x, y), (x + w, w + h), (0, 255, 0))
+    cv2.imshow('img', vis_observation_list[0])
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     for episodeCount in tqdm(range(10000)):
         behavior_name = behavior_names[0]

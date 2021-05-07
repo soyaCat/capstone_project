@@ -45,7 +45,7 @@ if __name__ == '__main__':
         wfnliiocn = write_file_name_list_index_instead_of_correct_name
         if generate_main is True:
             save_numpy_file('_main', list_index_for_main, wfnliiocn, episodeCount) # made_data 폴더 내에 사진 파일이 저장되니 어떤 데이터를 다루는지 알고 싶다면 참고 부탁드립니다.
-        action = [1, 0, 0, 0, 0]
+        action = [1, 1, 0, 0, 0]
         actionTuple = ConversionDataType.ConvertList2DiscreteAction(action, behavior_name)
         env.set_actions(behavior_name, actionTuple)
         env.step()
