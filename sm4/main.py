@@ -14,7 +14,7 @@ from PIL import Image
 from tqdm import tqdm
 import cv2
 
-game = "robot_camera_simu.exe"
+game = "sm4.exe"
 env_path = "./build/" + game
 save_picture_path = "./made_data/"
 channel = EngineConfigurationChannel()
@@ -50,19 +50,10 @@ if __name__ == '__main__':
             save_numpy_file('_main', list_index_for_main, wfnliiocn, episodeCount) # made_data 폴더 내에 사진 파일이 저장되니 어떤 데이터를 다루는지 알고 싶다면 참고 부탁드립니다.
         if generate_goal is True:
             save_numpy_file('_goal', list_index_for_goal, wfnliiocn, episodeCount) # made_data 폴더 내에 목표 이미지 파일이 저장되니 참고 부탁드립니다.
-        action = [0, 0, 0, 0, 0]
+        action = [1, 0, 0, 0, 0]
         actionTuple = ConversionDataType.ConvertList2DiscreteAction(action, behavior_name)
         env.set_actions(behavior_name, actionTuple)
         env.step()
-    x = 100;
-    y = 100;
-    w = 100;
-    h = 100
-    cv2.rectangle(vis_observation_list[0], (x, y), (x + w, w + h), (0, 255, 0))
-    cv2.imshow('img', vis_observation_list[0])
-
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
 
     for episodeCount in tqdm(range(10000)):
         behavior_name = behavior_names[0]
@@ -93,7 +84,7 @@ if __name__ == '__main__':
         
         -> 요구사항이나 궁금한 점이 있다면 연락주세요
         '''
-        action = [0, 0, 0, 0, 0]
+        action = [1, 0, 0, 0, 0]
         actionTuple = ConversionDataType.ConvertList2DiscreteAction(action, behavior_name)
         env.set_actions(behavior_name, actionTuple)
         env.step()
