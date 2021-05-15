@@ -35,7 +35,7 @@ learning_rate = 0.00025
 run_episode = 25000
 test_episode = 1000
 
-start_train_episode = 1000
+start_train_episode = 20
 
 target_update_step = 10000
 print_interval = 20
@@ -211,10 +211,6 @@ if __name__ == '__main__':
             train_mode = False
 
         # 상태, episode_rewards, done 초기화
-        behavior_name = behavior_names[0]
-        decision_steps, terminal_steps = env.get_steps(behavior_name)
-        vec_observation, vis_observation_list, done, step_reward = AgentsHelper.getObservation(behavior_name)
-        state = vis_observation_list[0]
         episode_rewards = 0
         done = False
 
@@ -223,6 +219,11 @@ if __name__ == '__main__':
             step += 1
 
             # 행동 결정 및 유니티 환경에 행동 적용
+            behavior_name = behavior_names[0]
+            decision_steps, terminal_steps = env.get_steps(behavior_name)
+            vec_observation, vis_observation_list, done, step_reward = AgentsHelper.getObservation(behavior_name)
+            state = vis_observation_list[0]
+            state = state.reshape(1, state_size[0], state_size[1], state_size[2])
             action_index = agent.get_action(state)
             action = [1, 0, 0, 0, 0]
             action[action_index+1] = 1
@@ -235,6 +236,7 @@ if __name__ == '__main__':
             decision_steps, terminal_steps = env.get_steps(behavior_name)
             vec_observation, vis_observation_list, done, step_reward = AgentsHelper.getObservation(behavior_name)
             next_state = vis_observation_list[0]
+            next_state = next_state.reshape(1, state_size[0], state_size[1], state_size[2])
             episode_rewards += step_reward
 
             # 학습 모드인 경우 리플레이 메모리에 데이터 저장
