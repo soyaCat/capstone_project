@@ -145,8 +145,6 @@ class AgentsHelper:
                 step_reward = decision_steps[tracked_agent].reward
             if tracked_agent in terminal_steps:  # The agent terminated its episode
                 step_reward = terminal_steps[tracked_agent].reward
-                if step_reward == 1.0:
-                    print(step_reward)
                 done = True
 
         for index, vis_obs in enumerate(vis_obs_list):

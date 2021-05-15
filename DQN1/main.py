@@ -55,13 +55,6 @@ save_picture_path = "./made_data/"
 save_path = "./saved_models/" + date_time + "_DQN"
 load_path = "./saved_models/" + "/0828-10-42_DQN/model/model"
 
-def save_numpy_file(append_name, list_index, wfnliiocn, episodeCount):
-    im = Image.fromarray(vis_observation_list[list_index].astype('uint8'), 'RGB')
-    if wfnliiocn == False:
-        im.save(save_picture_path + str(episodeCount) + append_name + '.jpg')
-    else:
-        im.save(save_picture_path + str(list_index) + '.jpg')
-
 # Model 클래스 -> 함성곱 신경망 정의 및 손실함수 설정, 네트워크 최적화 알고리즘 결정
 class Model():
     def __init__(self, model_name):
@@ -131,9 +124,13 @@ class DQNAgent():
 
     # 리플레이 메모리에 데이터 추가 (상태, 행동, 보상, 다음 상태, 게임 종료 여부)
     def append_sample(self, state, action, reward, next_state, done):
-        self.memory.append((state[0], action, reward, next_state[0], done))
+        if not done:
+            self.memory.append((state, action, reward, next_state, done))
 
-    # 네트워크 모델 저장
+        else:
+            if np.array_equal(state, next_state):
+                self.memory.append((state, action, reward, next_state, done))
+            # 네트워크 모델 저장
     def save_model(self):
         self.Saver.save(self.sess, save_path + "/model/model")
 
@@ -160,6 +157,7 @@ class DQNAgent():
             next_states.append(mini_batch[i][3])
             dones.append(mini_batch[i][4])
 
+
         # 타겟값 계산
         target = self.sess.run(self.model.Q_Out, feed_dict={self.model.input: states})
         target_val = self.sess.run(self.target_model.Q_Out, feed_dict={self.target_model.input: next_states})
@@ -167,6 +165,7 @@ class DQNAgent():
         for i in range(batch_size):
             if dones[i]:
                 target[i][actions[i]] = rewards[i]
+
             else:
                 target[i][actions[i]] = rewards[i] + discount_factor * np.amax(target_val[i])
 
@@ -199,7 +198,7 @@ class DQNAgent():
 # Main 함수 -> 전체적으로 DQN 알고리즘을 진행
 if __name__ == '__main__':
     channel = EngineConfigurationChannel()
-    channel.set_configuration_parameters(time_scale=1.0, target_frame_rate=60, capture_frame_rate=60)
+    # channel.set_configuration_parameters(time_scale=1.0, target_frame_rate=60, capture_frame_rate=60)
     env = UnityEnvironment(file_name=env_path, side_channels=[channel])
     env.reset()
     behavior_names = list(env.behavior_specs)
@@ -219,6 +218,11 @@ if __name__ == '__main__':
         # 상태, episode_rewards, done 초기화
         episode_rewards = 0
         done = False
+        behavior_name = behavior_names[0]
+        action = [1, 0, 0, 0, 0]
+        actionTuple = ConversionDataType.ConvertList2DiscreteAction(action, behavior_name)
+        env.set_actions(behavior_name, actionTuple)
+        env.step()
 
         # 한 에피소드를 진행하는 반복문
         while not done:
@@ -229,8 +233,18 @@ if __name__ == '__main__':
             decision_steps, terminal_steps = env.get_steps(behavior_name)
             vec_observation, vis_observation_list, done, step_reward = AgentsHelper.getObservation(behavior_name)
             state = vis_observation_list[0]
-            state = state.reshape(1, state_size[0], state_size[1], state_size[2])
-            action_index = agent.get_action(state)
+            action_index = agent.get_action(state.reshape(1,state_size[0],state_size[1], state_size[2]))
+            '''
+            action_index = int(input("숫자입력"))
+            if action_index == 8:
+                action_index = 0
+            if action_index == 2:
+                action_index = 1
+            if action_index == 4:
+                action_index = 2
+            if action_index == 6:
+                action_index = 3
+            '''
             action = [1, 0, 0, 0, 0]
             action[action_index+1] = 1
             actionTuple = ConversionDataType.ConvertList2DiscreteAction(action, behavior_name)
@@ -242,12 +256,18 @@ if __name__ == '__main__':
             decision_steps, terminal_steps = env.get_steps(behavior_name)
             vec_observation, vis_observation_list, done, step_reward = AgentsHelper.getObservation(behavior_name)
             next_state = vis_observation_list[0]
-            next_state = next_state.reshape(1, state_size[0], state_size[1], state_size[2])
             episode_rewards += step_reward
+            # print("reward: ", step_reward)
+            # print("done: ", done)
 
             # 학습 모드인 경우 리플레이 메모리에 데이터 저장
             if train_mode:
                 agent.append_sample(state, action, step_reward, next_state, done)
+                # im = Image.fromarray(state.astype('uint8'), 'RGB')
+                # im.save(save_picture_path + str(step) + "_state_" + str(action) + '.jpg')
+                # im = Image.fromarray(next_state.astype('uint8'), 'RGB')
+                # out = str(step_reward)
+                # im.save(save_picture_path + str(step) + "_z_" + out + "_" + str(action) + "_" + str(done) + '.jpg')
             else:
                 time.sleep(0.01)
                 agent.epsilon = 0.05
