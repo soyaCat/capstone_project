@@ -24,7 +24,7 @@ behavior_names = list(env.behavior_specs)
 ConversionDataType = CF.ConversionDataType()
 AgentsHelper = CF.AgentsHelper(env, string_log=None, ConversionDataType=ConversionDataType)
 
-connection_test_count = 10 #
+connection_test_count = 10
 
 write_file_name_list_index_instead_of_correct_name = False
 list_index_for_main = 0

@@ -15,7 +15,7 @@ from tqdm import tqdm
 import cv2
 
 game = "sm4.exe"
-env_path = "./build/" + game
+env_path = "./build_with_grid/" + game
 save_picture_path = "./made_data/"
 channel = EngineConfigurationChannel()
 channel.set_configuration_parameters(time_scale=1.0, target_frame_rate=60, capture_frame_rate=60)
