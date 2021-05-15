@@ -127,22 +127,26 @@ class AgentsHelper:
         vec_obs = 0
         
         for index, observation_spec in enumerate(spec.observation_specs):
-            shape = observation_spec.shape
-            if len(shape) == 3:
-                    vis_obs_list.append(decision_steps.obs[index])
-            elif len(shape) == 1:
-                    vec_obs = decision_steps.obs[index]
-
             tracked_agent = -1
             if len(decision_steps) >= 1:
                 tracked_agent = decision_steps.agent_id[0]
+                target_steps = decision_steps
             if len(terminal_steps) >= 1:
                 tracked_agent = terminal_steps.agent_id[0]
+                target_steps = terminal_steps
+
+            shape = observation_spec.shape
+            if len(shape) == 3:
+                    vis_obs_list.append(target_steps.obs[index])
+            elif len(shape) == 1:
+                    vec_obs = target_steps.obs[index]
 
             if tracked_agent in decision_steps:  # The agent requested a decision
                 step_reward = decision_steps[tracked_agent].reward
             if tracked_agent in terminal_steps:  # The agent terminated its episode
                 step_reward = terminal_steps[tracked_agent].reward
+                if step_reward == 1.0:
+                    print(step_reward)
                 done = True
 
         for index, vis_obs in enumerate(vis_obs_list):

@@ -55,6 +55,12 @@ save_picture_path = "./made_data/"
 save_path = "./saved_models/" + date_time + "_DQN"
 load_path = "./saved_models/" + "/0828-10-42_DQN/model/model"
 
+def save_numpy_file(append_name, list_index, wfnliiocn, episodeCount):
+    im = Image.fromarray(vis_observation_list[list_index].astype('uint8'), 'RGB')
+    if wfnliiocn == False:
+        im.save(save_picture_path + str(episodeCount) + append_name + '.jpg')
+    else:
+        im.save(save_picture_path + str(list_index) + '.jpg')
 
 # Model 클래스 -> 함성곱 신경망 정의 및 손실함수 설정, 네트워크 최적화 알고리즘 결정
 class Model():
