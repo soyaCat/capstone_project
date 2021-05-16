@@ -6,6 +6,7 @@ import tensorflow as tf
 from collections import deque
 from mlagents.envs import UnityEnvironment
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 # DQN을 위한 파라미터 값 세팅
 state_size = [64, 64, 3]
@@ -38,15 +39,14 @@ game = "capstone_dqn2"
 env_name = "./build/" + game
 
 # 모델 저장 및 불러오기 경로
-save_path = "../saved_models/" + game + "/" + date_time + "_DQN"
-load_path = "../saved_models/" + game + "/20190828-10-42-45_DQN/model/model"
+save_path = "./saved_models/" + date_time + "_DQN"
+load_path = "./saved_models/20190828-10-42-45_DQN/model/model"
 
 
 # Model 클래스 -> 함성곱 신경망 정의 및 손실함수 설정, 네트워크 최적화 알고리즘 결정
 class Model():
     def __init__(self, model_name):
-        self.input = tf.placeholder(shape=[None, state_size[0], state_size[1],
-                                           state_size[2]], dtype=tf.float32)
+        self.input = tf.placeholder(shape=[None, state_size[0], state_size[1], state_size[2]], dtype=tf.float32)
         # 입력을 -1 ~ 1까지 값을 가지도록 정규화
         self.input_normalize = (self.input - (255.0 / 2)) / (255.0 / 2)
 
@@ -115,8 +115,8 @@ class DQNAgent():
         self.memory.append((state[0], action, reward, next_state[0], done))
 
     # 네트워크 모델 저장
-    def save_model(self):
-        self.Saver.save(self.sess, save_path + "/model/model")
+    def save_model(self, episode):
+        self.Saver.save(self.sess, save_path + "/" + str(episode) +"_model/model")
 
     # 학습 수행
     def train_model(self, done):
@@ -175,9 +175,7 @@ class DQNAgent():
         return Summary, Merge
 
     def Write_Summray(self, reward, loss, episode):
-        self.Summary.add_summary(
-            self.sess.run(self.Merge, feed_dict={self.summary_loss: loss,
-                                                 self.summary_reward: reward}), episode)
+        self.Summary.add_summary(self.sess.run(self.Merge, feed_dict={self.summary_loss: loss, self.summary_reward: reward}), episode)
 
 
 # Main 함수 -> 전체적으로 DQN 알고리즘을 진행
@@ -200,15 +198,15 @@ if __name__ == '__main__':
     env_info = env.reset(train_mode=train_mode)[default_brain]
 
     # 게임 진행 반복문
-    for episode in range(run_episode + test_episode):
+    for episode in tqdm(range(run_episode + test_episode)):
         if episode > run_episode:
             train_mode = False
             env_info = env.reset(train_mode=train_mode)[default_brain]
 
         # 상태, episode_rewards, done 초기화
         state = np.uint8(255 * np.array(env_info.visual_observations[0]))
-        plt.imshow(state[0])
-        plt.show()
+        # plt.imshow(state[0])
+        # plt.show()
         episode_rewards = 0
         done = False
 
@@ -251,14 +249,14 @@ if __name__ == '__main__':
         # 게임 진행 상황 출력 및 텐서 보드에 보상과 손실함수 값 기록
         if episode % print_interval == 0 and episode != 0:
             print("step: {} / episode: {} / reward: {:.2f} / loss: {:.4f} / epsilon: {:.3f}".format
-                  (step, episode, np.mean(rewards), np.mean(losses), agent.epsilon))
+                  (step, episode, np.mean(rewards), np.mean(losses)*100, agent.epsilon))
             agent.Write_Summray(np.mean(rewards), np.mean(losses), episode)
             rewards = []
             losses = []
 
         # 네트워크 모델 저장
         if episode % save_interval == 0 and episode != 0:
-            agent.save_model()
+            agent.save_model(episode)
             print("Save Model {}".format(episode))
 
     env.close()
