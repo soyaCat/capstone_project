@@ -13,7 +13,7 @@ state_size = [64, 64, 3]
 action_size = 4
 
 load_model = False
-train_mode = True
+train_mode = False
 
 batch_size = 32
 mem_maxlen = 50000
@@ -36,7 +36,7 @@ date_time = datetime.datetime.now().strftime("%Y%m%d-%H-%M-%S")
 
 # 유니티 환경 경로
 game = "capstone_dqn2"
-env_name = "./build/" + game
+env_name = "./build_ver2/" + game
 
 # 모델 저장 및 불러오기 경로
 save_path = "./saved_models/" + date_time + "_DQN"
@@ -230,7 +230,7 @@ if __name__ == '__main__':
                 agent.append_sample(state, action, reward, next_state, done)
             else:
                 time.sleep(0.01)
-                agent.epsilon = 0.05
+                agent.epsilon = 1
 
             # 상태 정보 업데이트
             state = next_state
