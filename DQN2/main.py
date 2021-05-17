@@ -215,9 +215,9 @@ if __name__ == '__main__':
             step += 1
 
             # 행동 결정 및 유니티 환경에 행동 적용
-            action_index = agent.get_action(state)
-            action = action_index+2
-            env_info = env.step(action)[default_brain]
+            action = agent.get_action(state)
+            action_index = action+2
+            env_info = env.step(action_index)[default_brain]
 
             # 다음 상태, 보상, 게임 종료 정보 취득
             next_state = np.uint8(255 * np.array(env_info.visual_observations[0]))
