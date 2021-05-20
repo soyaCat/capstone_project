@@ -68,7 +68,7 @@ def slide_real_image(arr):
     return list2
 
 def find_index(arr):
-    minc = np.array([200, 150, 150])
+    minc = np.array([100, 100, 150])
     maxc = np.array([255, 200, 200])
     index_min = np.where(np.all(i >= minc, axis=2))
     index_max = np.where(np.all(i <= maxc, axis=2))
@@ -76,7 +76,7 @@ def find_index(arr):
     print("조건에 맞는 요소의 인덱스 값")
     print(np.intersect1d(index_min[0], index_max[0]))
     print(np.intersect1d(index_min[1], index_max[1]))
-    
+
 
 
 
@@ -127,9 +127,6 @@ if __name__ == '__main__':
         print(width)
         print(height)
         print(channel)
-        for w in range(width):
-            print("{}줄의 픽셀".format(w))
-            print(i[w])
         find_index(i)
         plt.imshow(i)
         plt.show()
