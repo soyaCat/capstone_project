@@ -133,22 +133,21 @@ if __name__ == '__main__':
     roi = vis_observation_list[0][y:y + h, x:x + w]
 
     arr = np.array(roi)
-    list1=list()
-    for i in range(0,250,50):
-        for j in range( 0,300,50):
-            list1.append(arr[i:i + 50, j:j + 50, :])
     list2 = slide_real_image(arr)
 
     for i in list2:
+        print("이미지의 픽셀값들")
+        (width,height,channel) = np.shape(i)
+        print(width)
+        print(height)
+        print(channel)
+        for w in range(width):
+            print("{}줄의 픽셀".format(w))
+            print(i[w])
         plt.imshow(i)
         plt.show()
 
-    list1_avg = list()
-    for i in range(30):
-        list1_avg.append(np.mean(list1[i], axis=0))
-    list1_avg = np.array(list1_avg)
-    for i in range(30):
-        print(class_img(list1_avg[i]))
+
 
     '''np.where()어떤조건에 있는 행렬의 인덱스값을 리턴
     인덱스 값 최고값과 최저값
