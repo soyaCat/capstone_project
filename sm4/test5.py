@@ -67,6 +67,18 @@ def slide_real_image(arr):
     list2.append(arr[200:250, 251:300, ])
     return list2
 
+def find_index(arr):
+    minc = np.array([200, 150, 150])
+    maxc = np.array([255, 200, 200])
+    index_min = np.where(np.all(i >= minc, axis=2))
+    index_max = np.where(np.all(i <= maxc, axis=2))
+    # 두 행렬의 교집합 프린트
+    print("조건에 맞는 요소의 인덱스 값")
+    print(np.intersect1d(index_min[0], index_max[0]))
+    print(np.intersect1d(index_min[1], index_max[1]))
+    
+
+
 
 def class_img(list):  # 요소 판별
     cnt1 = 0
@@ -98,7 +110,6 @@ def class_img(list):  # 요소 판별
     else:
         return 'empty'
 
-
 if __name__ == '__main__':
     for episodeCount in tqdm(range(connection_test_count)):
         wfnliiocn = write_file_name_list_index_instead_of_correct_name
@@ -107,7 +118,6 @@ if __name__ == '__main__':
     vis_observation = cv2.imread("./made_data/0_main.jpg")
     vis_observation = cv2.cvtColor(vis_observation, cv2.COLOR_BGR2RGB)
     roi = vis_observation[y:y + h, x:x + w]
-
     arr = np.array(roi)
     list2 = slide_real_image(arr)
 
@@ -120,5 +130,6 @@ if __name__ == '__main__':
         for w in range(width):
             print("{}줄의 픽셀".format(w))
             print(i[w])
+        find_index(i)
         plt.imshow(i)
         plt.show()
