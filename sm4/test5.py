@@ -31,51 +31,68 @@ generate_goal = True
 
 def slide_real_image(arr):
     list2 = list()
-    list2.append(arr[1:49, 0:48, ])
-    list2.append(arr[1:49, 49:99, ])
-    list2.append(arr[1:49, 100:150, ])
-    list2.append(arr[1:49, 151:200, ])
-    list2.append(arr[1:49, 201:250, ])
-    list2.append(arr[1:49, 251:300, ])
+    list2.append(arr[0:40, 0:37, ])
+    list2.append(arr[0:40, 38:92, ])
+    list2.append(arr[0:40, 93:149, ])
+    list2.append(arr[0:40, 150:204, ])
+    list2.append(arr[0:40, 205:261, ])
+    list2.append(arr[0:40, 262:300, ])
 
-    list2.append(arr[50:100, 0:48, ])
-    list2.append(arr[50:100, 49:99, ])
-    list2.append(arr[50:100, 100:150, ])
-    list2.append(arr[50:100, 151:200, ])
-    list2.append(arr[50:100, 201:250, ])
-    list2.append(arr[50:100, 251:300, ])
+    list2.append(arr[41:95, 0:37, ])
+    list2.append(arr[41:95, 38:92, ])
+    list2.append(arr[41:95, 93:149, ])
+    list2.append(arr[41:95, 150:204, ])
+    list2.append(arr[41:95, 205:261, ])
+    list2.append(arr[41:95, 262:300, ])
 
-    list2.append(arr[101:151, 0:48, ])
-    list2.append(arr[101:151, 49:99, ])
-    list2.append(arr[101:151, 100:150, ])
-    list2.append(arr[101:151, 151:200, ])
-    list2.append(arr[101:151, 201:250, ])
-    list2.append(arr[101:151, 251:300, ])
+    list2.append(arr[96:151, 0:37, ])
+    list2.append(arr[96:151, 38:92, ])
+    list2.append(arr[96:151, 93:149, ])
+    list2.append(arr[96:151, 150:204, ])
+    list2.append(arr[96:151, 205:261, ])
+    list2.append(arr[96:151, 262:300, ])
 
-    list2.append(arr[152:199, 0:48, ])
-    list2.append(arr[152:199, 49:99, ])
-    list2.append(arr[152:199, 100:150, ])
-    list2.append(arr[152:199, 151:200, ])
-    list2.append(arr[152:199, 201:250, ])
-    list2.append(arr[152:199, 251:300, ])
+    list2.append(arr[152:207, 0:37, ])
+    list2.append(arr[152:207, 38:92, ])
+    list2.append(arr[152:207, 93:149, ])
+    list2.append(arr[152:207, 150:204, ])
+    list2.append(arr[152:207, 205:261, ])
+    list2.append(arr[152:207, 262:300, ])
 
-    list2.append(arr[200:250, 0:48, ])
-    list2.append(arr[200:250, 49:99, ])
-    list2.append(arr[200:250, 100:150, ])
-    list2.append(arr[200:250, 151:200, ])
-    list2.append(arr[200:250, 201:250, ])
-    list2.append(arr[200:250, 251:300, ])
+    list2.append(arr[208:250, 0:37, ])
+    list2.append(arr[208:250, 38:92, ])
+    list2.append(arr[208:250, 93:149, ])
+    list2.append(arr[208:250, 150:204, ])
+    list2.append(arr[208:250, 205:261, ])
+    list2.append(arr[208:250, 262:300, ])
     return list2
 
 def find_index(arr):
-    minc = np.array([100, 100, 150])
-    maxc = np.array([255, 200, 200])
+    minc = np.array([190, 80, 90])
+    maxc = np.array([210, 95, 100])
     index_min = np.where(np.all(i >= minc, axis=2))
     index_max = np.where(np.all(i <= maxc, axis=2))
     # 두 행렬의 교집합 프린트
-    print("조건에 맞는 요소의 인덱스 값")
-    print(np.intersect1d(index_min[0], index_max[0]))
-    print(np.intersect1d(index_min[1], index_max[1]))
+    # print("조건에 맞는 요소의 인덱스 값")
+    # print(set(index_min[0]), set(index_max[0]))
+    # print(set(index_min[1]), set(index_max[1]))
+
+    intersects_0 = np.intersect1d(index_min[0], index_max[0])
+    print(intersects_0)
+    intersects_1 = np.intersect1d(index_min[1], index_max[1])
+
+    data_collector = []
+    for k in intersects_0:
+        for j in intersects_1:
+            if np.all(arr[k][j]>minc) and np.all(arr[k][j]<maxc):
+                data_collector.append(j)
+    data_collector = set(data_collector)
+    data_collector = list(data_collector)
+    intersects_1 = np.array(data_collector)
+    print(intersects_1)
+
+
+
 
 
 
@@ -122,11 +139,6 @@ if __name__ == '__main__':
     list2 = slide_real_image(arr)
 
     for i in list2:
-        print("이미지의 픽셀값들")
-        (width,height,channel) = np.shape(i)
-        print(width)
-        print(height)
-        print(channel)
         find_index(i)
         plt.imshow(i)
         plt.show()
