@@ -143,8 +143,7 @@ class DQNAgent():
 
         # 타겟값 계산
         target = self.sess.run(self.model.Q_Out, feed_dict={self.model.input: states})
-        target_val = self.sess.run(self.target_model.Q_Out,
-                                   feed_dict={self.target_model.input: next_states})
+        target_val = self.sess.run(self.target_model.Q_Out, feed_dict={self.target_model.input: next_states})
 
         for i in range(batch_size):
             if dones[i]:
@@ -217,6 +216,17 @@ if __name__ == '__main__':
             # 행동 결정 및 유니티 환경에 행동 적용
             action = agent.get_action(state)
             action_index = action+2
+            a = input()
+            if a=='w':
+                action_index = 2
+            elif a=='s':
+                action_index = 3
+            elif a=='a':
+                action_index = 4
+            elif a=='d':
+                action_index = 5
+            else:
+                action_index = 0
             env_info = env.step(action_index)[default_brain]
 
             # 다음 상태, 보상, 게임 종료 정보 취득

@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import cv2
 
 game = "sm4.exe"
-env_path = "./build_with_grid/" + game
+env_path = "./build/" + game
 save_picture_path = "./made_data/"
 channel = EngineConfigurationChannel()
 
@@ -68,8 +68,8 @@ def slide_real_image(arr):
     return list2
 
 def find_index(arr):
-    minc = np.array([190, 80, 90])
-    maxc = np.array([210, 95, 100])
+    minc = np.array([185, 75, 85])
+    maxc = np.array([215, 100, 105])
     index_min = np.where(np.all(i >= minc, axis=2))
     index_max = np.where(np.all(i <= maxc, axis=2))
     # 두 행렬의 교집합 프린트
@@ -78,10 +78,12 @@ def find_index(arr):
     # print(set(index_min[1]), set(index_max[1]))
 
     intersects_0 = np.intersect1d(index_min[0], index_max[0])
-    print(intersects_0)
+    # print(intersects_0)
     intersects_1 = np.intersect1d(index_min[1], index_max[1])
 
     data_collector = []
+    col_list = []
+
     for k in intersects_0:
         for j in intersects_1:
             if np.all(arr[k][j]>minc) and np.all(arr[k][j]<maxc):
@@ -89,12 +91,32 @@ def find_index(arr):
     data_collector = set(data_collector)
     data_collector = list(data_collector)
     intersects_1 = np.array(data_collector)
-    print(intersects_1)
+    # print(intersects_1)
+
+    return intersects_0, intersects_1
 
 
+def find_target_point(arr, intersects_0, intersects_1):
+    minc = np.array([185, 75, 85])
+    maxc = np.array([215, 100, 105])
+    col_list = []
 
+    for i in range(np.shape(arr)[0]):
+        col_list.append(0)
 
+    for i in intersects_0:
+        if not np.where(1==intersects_1):
+            for j in intersects_1:
+                if np.all(arr[i][j] >= minc) and np.all(arr[i][j] <= maxc):
+                    col_list[i] = j
+                    break
+        else:
+            for j in np.flip(intersects_1):
+                if np.all(arr[i][j] >= minc) and np.all(arr[i][j] <= maxc):
+                    col_list[i] = j
+                    break
 
+    return col_list
 
 
 def class_img(list):  # 요소 판별
@@ -139,6 +161,10 @@ if __name__ == '__main__':
     list2 = slide_real_image(arr)
 
     for i in list2:
-        find_index(i)
+        its_0, its_1 = find_index(i)
+        col_list = find_target_point(i, its_0, its_1)
+        print(its_0)
+        print(its_1)
+        print(col_list)
         plt.imshow(i)
         plt.show()
