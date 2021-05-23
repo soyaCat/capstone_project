@@ -156,13 +156,6 @@ def instance_stop():
     plt.imshow(arr)
     plt.show()
 
-
-
-
-
-
-
-
 if __name__ == '__main__':
     for episodeCount in tqdm(range(connection_test_count)):
         behavior_name = behavior_names[0]
