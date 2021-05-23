@@ -70,8 +70,8 @@ def slide_real_image(arr):
 def find_index(arr):
     minc = np.array([185, 75, 85])
     maxc = np.array([215, 100, 105])
-    index_min = np.where(np.all(i >= minc, axis=2))
-    index_max = np.where(np.all(i <= maxc, axis=2))
+    index_min = np.where(np.all(arr >= minc, axis=2))
+    index_max = np.where(np.all(arr <= maxc, axis=2))
     # 두 행렬의 교집합 프린트
     # print("조건에 맞는 요소의 인덱스 값")
     # print(set(index_min[0]), set(index_max[0]))
@@ -117,37 +117,6 @@ def find_target_point(arr, intersects_0, intersects_1):
                     break
 
     return col_list
-
-
-def class_img(list):  # 요소 판별
-    cnt1 = 0
-    cnt2 = 0
-    cnt3 = 0
-    cnt4 = 0
-    cnt5 = 0
-    for i in range(50):
-        if list[i][0] > 200 and list[i][1] > 150 and list[i][1] < 200 and list[i][2] > 150 and list[i][2] < 200:
-            cnt1 += 1
-        elif list[i][0] > 100 and list[i][0] < 130 and list[i][1] > 100 and list[i][1] < 140 and list[i][2] < 250:
-            cnt2 += 1
-        elif list[i][0] > 200 and list[i][0] < 230 and list[i][1] > 230 and list[i][2] > 200 and list[i][2] < 220:
-            cnt3 += 1
-        elif list[i][0] > 250 and list[i][1] > 120 and list[i][1] < 150 and list[i][2] > 80 and list[i][2] < 90:
-            cnt4 += 1
-        elif list[i][0] > 50 and list[i][0] < 100 and list[i][1] > 250 and list[i][2] > 250:
-            cnt5 += 1
-    if cnt1 > 5:
-        return 'obs'
-    elif cnt2 > 5:
-        return 'target'
-    elif cnt3 > 5:
-        return 'robot'
-    elif cnt4 > 5:
-        return 'goal'
-    elif cnt5 > 5:
-        return 'goal'
-    else:
-        return 'empty'
 
 if __name__ == '__main__':
     for episodeCount in tqdm(range(connection_test_count)):
