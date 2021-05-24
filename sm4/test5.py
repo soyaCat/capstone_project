@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import cv2
 
 game = "sm4.exe"
-env_path = "./build/" + game
+env_path = "./build_with_rot/" + game
 save_picture_path = "./made_data/"
 channel = EngineConfigurationChannel()
 
@@ -103,9 +103,8 @@ def find_target_point(arr, intersects_0, intersects_1):
 
     for i in range(np.shape(arr)[0]):
         col_list.append(0)
-
     for i in intersects_0:
-        if not np.where(1==intersects_1):
+        if not np.any(np.where(4 == intersects_1)):
             for j in intersects_1:
                 if np.all(arr[i][j] >= minc) and np.all(arr[i][j] <= maxc):
                     col_list[i] = j
@@ -132,8 +131,9 @@ if __name__ == '__main__':
     for i in list2:
         its_0, its_1 = find_index(i)
         col_list = find_target_point(i, its_0, its_1)
-        print(its_0)
-        print(its_1)
+        #print(its_0)
+        #print(its_1)
         print(col_list)
         plt.imshow(i)
         plt.show()
+
