@@ -266,6 +266,14 @@ def final_process_image(arr):
     return arr
 
 def image_process(image):
+    global count_y_green
+    global seta_H
+    global seta_W
+    count_y_green = 0
+    seta_H = 0
+    seta_W = 0
+    count_red_cell = 0
+    red_cell_list = []
     x, y, w, h = roi_parameter
     seta = 0
     roi = image[y:y + h, x:x + w]
@@ -299,24 +307,23 @@ def image_process(image):
             lenX = round((its_1[-1] - its_1[0]) / np.shape(i)[1] * 50)# ansX부터 lenX만큼 칠할것(범위)
             lenY = round((its_0[-1] - its_0[0]) / np.shape(i)[0] * 50) # ansY부터 lenY만큼 칠할것(범위)
         if cell == 'obs':
-            for j in range(50):
-                for k in range(50):
-                    list3[index][j][k] = fake_red.copy()
+            list3[index][:, :, :] = fake_red
+            count_red_cell = count_red_cell + 1
+            red_cell_list.append(index)
         elif cell == 'target':
-            for j in range(lenY):
-                for k in range(lenX):
-                    list3[index][ansY + j][ansX + k] = fake_blue.copy()
+            list3[index][ansY:ansY+lenY,ansX:ansX+lenX,:] = fake_blue
         elif cell == 'robot':
-            for j in range(lenY):
-                for k in range(lenX):
-                    list3[index][ansY + j][ansX + k] = fake_green.copy()
+            list3[index][ansY:ansY+lenY,ansX:ansX+lenX,:] = fake_green
+
+    if len(red_cell_list)>1:
+        for i in red_cell_list:
+            list3[i][:,:,:] = fake_orange
+
     result = np.empty(shape=[250, 300, 3], dtype = int)
     for i in range(30):
         result[(i//6)*50:(i//6)*50+50, (i%6)*50:(i%6)*50+50, :] = list3[i]
     result = final_process_image(result)
 
-    print(seta_W)
-    print(seta_H)
     seta = math.atan(seta_W/seta_H)
     seta = math.degrees(seta)
 
