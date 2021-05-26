@@ -302,10 +302,10 @@ def image_process(image):
             find_target_point_green(i, its_0, its_1)
 
         if cell != 'None':
-            ansX = round(50 / np.shape(i)[1] * its_1[0]) # ansX 는 50x50에서 그 색의 값이 시작되는 x의 좌표
-            ansY = round(50 / np.shape(i)[0] * its_0[0]) # ansY 는 50x50에서 그 색의 값이 시작되는 y의 좌표
+            ansX = round(50 / np.shape(i)[1] * its_1[0])# ansX 는 50x50에서 그 색의 값이 시작되는 x의 좌표
+            ansY = round(50 / np.shape(i)[0] * its_0[0])# ansY 는 50x50에서 그 색의 값이 시작되는 y의 좌표
             lenX = round((its_1[-1] - its_1[0]) / np.shape(i)[1] * 50)# ansX부터 lenX만큼 칠할것(범위)
-            lenY = round((its_0[-1] - its_0[0]) / np.shape(i)[0] * 50) # ansY부터 lenY만큼 칠할것(범위)
+            lenY = round((its_0[-1] - its_0[0]) / np.shape(i)[0] * 50)# ansY부터 lenY만큼 칠할것(범위)
         if cell == 'obs':
             list3[index][:, :, :] = fake_red
             count_red_cell = count_red_cell + 1
@@ -317,7 +317,7 @@ def image_process(image):
 
     if len(red_cell_list)>1:
         for i in red_cell_list:
-            list3[i][:,:,:] = fake_orange
+            list3[i][:, :, :] = fake_orange
 
     result = np.empty(shape=[250, 300, 3], dtype = int)
     for i in range(30):
