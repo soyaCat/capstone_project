@@ -1,0 +1,12 @@
+1)map_maker내부의 게임파일로 DQN맵을 생성 및 저장
+
+2)./map_maker_build/map_maker_Data폴더의 basic_map과 user_setting.txt파일을 복사한다.
+
+3)./DQN_core_build/DQN_core_Data폴더에 붙여넣기
+
+4)DQN_core_build의 exe 파일을 실행시켜보면 맵이 잘 옮겨졌음이 확인가능
+
+맵에서 지정한 빨간색 화물과 상호 작용 하는지 안하는지
+화물을 옮기는지 아님 길을 찾는지
+목표지점은 정해진 곳인지 아님 랜덤인지 등도 텍스트 파일에 정보로 저장되어 DQN_core파일이 읽을 수 있으며
+실제 강화학습의 한 에피소드 마다 이 텍스트 파일들의 정보를 가지고 환경을 리셋하게 된다.
