@@ -3,12 +3,21 @@ import matplotlib.pyplot as plt
 import cv2
 import math
 
+'''
 real_red_minc = np.array([160, 80, 80])
 real_red_maxc = np.array([210, 95, 100])
 real_blue_minc = np.array([79, 91, 250])
 real_blue_maxc = np.array([82, 95, 255])
 real_green_minc = np.array([65, 165, 85])
 real_green_maxc = np.array([85, 195, 117])
+'''
+
+real_red_minc = np.array([185, 30, 44])
+real_red_maxc = np.array([220, 90, 110])
+real_blue_minc = np.array([18, 76, 240])
+real_blue_maxc = np.array([72, 130, 255])
+real_green_minc = np.array([33, 130, 125])
+real_green_maxc = np.array([60, 160, 150])
 
 fake_red = np.array([161, 0, 0])
 fake_orange = np.array([255, 75, 0])
@@ -17,7 +26,7 @@ fake_green = np.array([0, 113, 15])
 fake_yellow = np.array([192, 190, 0])
 fake_pulple = np.array([108, 0, 97])
 
-roi_parameter = [170, 195, 300, 250]
+roi_parameter = [142,22,300,250]
 
 count_y_green = 0
 seta_H = 0
@@ -26,40 +35,40 @@ seta_W = 0
 
 def slide_real_image(arr):
     list2 = list()
-    list2.append(arr[0:40, 0:37, ])
-    list2.append(arr[0:40, 38:92, ])
-    list2.append(arr[0:40, 93:149, ])
-    list2.append(arr[0:40, 150:204, ])
-    list2.append(arr[0:40, 205:261, ])
-    list2.append(arr[0:40, 262:300, ])
+    list2.append(arr[0:47,0:40,])
+    list2.append(arr[0:47,41:96,])
+    list2.append(arr[0:47,97:154,])
+    list2.append(arr[0:48,155:212,])
+    list2.append(arr[0:51,213:267,])
+    list2.append(arr[0:51,268:300,])
 
-    list2.append(arr[41:95, 0:37, ])
-    list2.append(arr[41:95, 38:92, ])
-    list2.append(arr[41:95, 93:149, ])
-    list2.append(arr[41:95, 150:204, ])
-    list2.append(arr[41:95, 205:261, ])
-    list2.append(arr[41:95, 262:300, ])
+    list2.append(arr[48:95,0:37,])
+    list2.append(arr[48:100,38:94,])
+    list2.append(arr[48:100,95:152,])
+    list2.append(arr[49:101,153:211,])
+    list2.append(arr[52:101,212:267,])
+    list2.append(arr[52:101,268:300,])
 
-    list2.append(arr[96:151, 0:37, ])
-    list2.append(arr[96:151, 38:92, ])
-    list2.append(arr[96:151, 93:149, ])
-    list2.append(arr[96:151, 150:204, ])
-    list2.append(arr[96:151, 205:261, ])
-    list2.append(arr[96:151, 262:300, ])
+    list2.append(arr[96:147, 0:36, ])
+    list2.append(arr[101:150, 37:93, ])
+    list2.append(arr[101:152, 94:152, ])
+    list2.append(arr[102:154, 153:212, ])
+    list2.append(arr[102:150, 213:267, ])
+    list2.append(arr[102:150, 268:300, ])
 
-    list2.append(arr[152:207, 0:37, ])
-    list2.append(arr[152:207, 38:92, ])
-    list2.append(arr[152:207, 93:149, ])
-    list2.append(arr[152:207, 150:204, ])
-    list2.append(arr[152:207, 205:261, ])
-    list2.append(arr[152:207, 262:300, ])
+    list2.append(arr[151:195, 0:35, ])
+    list2.append(arr[151:199, 36:92, ])
+    list2.append(arr[152:202, 93:151, ])
+    list2.append(arr[155:203, 152:209, ])
+    list2.append(arr[156:203, 210:263, ])
+    list2.append(arr[156:203, 264:300, ])
 
-    list2.append(arr[208:250, 0:37, ])
-    list2.append(arr[208:250, 38:92, ])
-    list2.append(arr[208:250, 93:149, ])
-    list2.append(arr[208:250, 150:204, ])
-    list2.append(arr[208:250, 205:261, ])
-    list2.append(arr[208:250, 262:300, ])
+    list2.append(arr[196:250, 0:37, ])
+    list2.append(arr[200:250, 38:94, ])
+    list2.append(arr[203:250, 95:151, ])
+    list2.append(arr[204:250, 152:207, ])
+    list2.append(arr[204:250, 209:263, ])
+    list2.append(arr[204:250, 262:300, ])
     return list2
 
 def input_image():
@@ -278,6 +287,8 @@ def image_process(image):
     seta = 0
     roi = image[y:y + h, x:x + w]
     roi = np.array(roi)
+    plt.imshow(roi)
+    plt.show()
     arr = cv2.GaussianBlur(roi, (3, 3), 0)
     list2 = slide_real_image(arr)
     list3 = input_image()
