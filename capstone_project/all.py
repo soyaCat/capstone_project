@@ -1,6 +1,3 @@
-from mlagents_envs.environment import UnityEnvironment
-from mlagents_envs.base_env import ActionTuple
-from mlagents_envs.side_channel.engine_configuration_channel import EngineConfigurationChannel
 import numpy as np
 import datetime
 import time
@@ -21,13 +18,6 @@ import image_function as IMG_F
 game = "sm3.exe"
 env_path = "./build/" + game
 save_picture_path = "./made_data/"
-channel = EngineConfigurationChannel()
-channel.set_configuration_parameters(time_scale=1.0, target_frame_rate=60, capture_frame_rate=60)
-env = UnityEnvironment(file_name=env_path, side_channels=[channel])
-env.reset()
-behavior_names = list(env.behavior_specs)
-ConversionDataType = CF.ConversionDataType()
-AgentsHelper = CF.AgentsHelper(env, string_log=None, ConversionDataType=ConversionDataType)
 address = "94:B9:7E:AC:86:1A"
 read_write_charcteristic_uuid = "33abb9fe-193f-4d1e-8616-bd5865a35eac"
 message = ""
@@ -37,7 +27,6 @@ connection_test_count = 0  #
 write_file_name_list_index_instead_of_correct_name = False
 list_index_for_main = 0
 generate_main = True
-behavior_name = behavior_names[0]
 
 state_size = [64, 64, 3]
 action_size = 4
@@ -48,6 +37,7 @@ mem_maxlen = 50000
 discount_factor = 0.9
 learning_rate = 0.00025
 epsilon_init = 0.05
+cap = cv2.VideoCapture(0)
 
 # 모델 저장 및 불러오기 경로
 load_path = "./suc2_DQN/25000_model/model"
@@ -148,9 +138,11 @@ def get_most_close_center_point(c_0, c_1, x_cell):
     return min_index
 
 def get_image_and_preprocess():
-    img = cv2.imread("./test_real_img/" + "2.jpg")
-    img = cv2.resize(img, (588, 286), interpolation=cv2.INTER_LANCZOS4)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    ret, frame = cap.read()
+    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    plt.imshow(img)
+    plt.show()
+    cv2.imwrite('4.jpg', frame)
     result_s, seta = IMG_F.image_process(img)
     arr = np.array(result_s)
     print(np.shape(arr))
@@ -161,9 +153,6 @@ def move_robot(action):
     loop = asyncio.get_event_loop()
     message = get_correct_vec(action)
     loop.run_until_complete(run(address, message))
-    actionTuple = ConversionDataType.ConvertList2DiscreteAction(action, behavior_name)
-    env.set_actions(behavior_name, actionTuple)
-    env.step()
 
 
 def move_target_index_point(target_index, x_cell):

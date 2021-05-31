@@ -14,10 +14,10 @@ real_green_maxc = np.array([85, 195, 117])
 
 real_red_minc = np.array([185, 30, 44])
 real_red_maxc = np.array([220, 90, 110])
-real_blue_minc = np.array([18, 76, 240])
+real_blue_minc = np.array([18, 76, 230])
 real_blue_maxc = np.array([72, 130, 255])
-real_green_minc = np.array([33, 130, 125])
-real_green_maxc = np.array([60, 160, 150])
+real_green_minc = np.array([33, 130, 108])
+real_green_maxc = np.array([60, 160, 130])
 
 fake_red = np.array([161, 0, 0])
 fake_orange = np.array([255, 75, 0])
@@ -288,6 +288,8 @@ def image_process(image):
     roi = image[y:y + h, x:x + w]
     roi = np.array(roi)
     arr = cv2.GaussianBlur(roi, (3, 3), 0)
+    plt.imshow(arr)
+    plt.show()
     list2 = slide_real_image(arr)
     list3 = input_image()
     for index, i in enumerate(list2):
