@@ -150,6 +150,7 @@ def get_image_and_preprocess():
     x, y, w, h = [170, 195, 300, 250]
     roi = vis_observation_list[0][y:y + h, x:x + w]
     arr = np.array(roi)
+    print(np.shape(arr))
 
     return arr
 
