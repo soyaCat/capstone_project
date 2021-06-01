@@ -21,6 +21,8 @@ save_picture_path = "./made_data/"
 address = "94:B9:7E:AC:86:1A"
 read_write_charcteristic_uuid = "33abb9fe-193f-4d1e-8616-bd5865a35eac"
 message = ""
+services = 0
+client = 0
 
 connection_test_count = 0  #
 
@@ -138,11 +140,10 @@ def get_most_close_center_point(c_0, c_1, x_cell):
     return min_index
 
 def get_image_and_preprocess():
-    ret, frame = cap.read()
+    #ret, frame = cap.read()
+    frame = cv2.imread("./real2_img/2.jpg")
+    frame = cv2.resize(frame, (440, 290), interpolation=cv2.INTER_LANCZOS4)
     img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    plt.imshow(img)
-    plt.show()
-    cv2.imwrite('4.jpg', frame)
     result_s, seta = IMG_F.image_process(img)
     arr = np.array(result_s)
     print(np.shape(arr))
@@ -152,7 +153,7 @@ def get_image_and_preprocess():
 def move_robot(action):
     loop = asyncio.get_event_loop()
     message = get_correct_vec(action)
-    loop.run_until_complete(run(address, message))
+    loop.run_until_complete(send_message(message))
 
 
 def move_target_index_point(target_index, x_cell):
@@ -217,35 +218,48 @@ def get_DQN(arr, agent):
 def get_correct_vec(action):
     message = ""
     if action[1] == 1:
-        message = "move_left"
+        message = "a"
     elif action[2] == 1:
-        message = "move_right"
+        message = "d"
     elif action[3] == 1:
-        message = "move_backward"
+        message = "s"
     elif action[4] == 1:
-        message = "move_forward"
-    elif action[5] == 1:
-        message = "turn_left"
-    elif action[6] == 1:
-        message = "turn_right"
+        message = "w"
     else:
-        message = "stop"
-
-    print(message)
+        message = "s"
+    message = input()
+    left = 0
+    right = 0
+    message = message+str(left)+str(right)
     return message
 
-async def run(address, message):
-    async with BleakClient(address) as client:
-        services = await client.get_services()
-        for service in services:
-            for characteristic in service.characteristics:
-                if characteristic.uuid == read_write_charcteristic_uuid:
-                    # 데이터 쓰기
-                    if 'write' in characteristic.properties:
-                        await client.write_gatt_char(characteristic, bytes(message.encode()))
+async def get_services(address):
+    global services
+    global client
+    client = BleakClient(address)
+    await client.connect()
+    services = await client.get_services()
+    print('connect')
+
+async def disconnect():
+    global client
+    await client.disconnect()
     print('disconnect')
 
+async def send_message(message):
+    global services
+    for service in services:
+        for characteristic in service.characteristics:
+            if characteristic.uuid == read_write_charcteristic_uuid:
+                # 데이터 쓰기
+                if 'write' in characteristic.properties:
+                    await client.write_gatt_char(characteristic, bytes(message.encode()))
+
+
 if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(get_services(address))
+
     arr = get_image_and_preprocess()
     x_cell = get_cell_center_point(arr)
     _, _, c_0, c_1 = find_robot(arr)
@@ -261,5 +275,5 @@ if __name__ == '__main__':
         arr = get_image_and_preprocess()
         move_target = get_DQN(arr, agent)
 
-    env.close()
+    loop.run_until_complete(disconnect())
 

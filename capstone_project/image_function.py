@@ -287,8 +287,6 @@ def image_process(image):
     seta = 0
     roi = image[y:y + h, x:x + w]
     roi = np.array(roi)
-    plt.imshow(roi)
-    plt.show()
     arr = cv2.GaussianBlur(roi, (3, 3), 0)
     list2 = slide_real_image(arr)
     list3 = input_image()
