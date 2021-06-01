@@ -10,4 +10,4 @@ while 1:
 while 1:
     a = input()
     ret, frame = cap.read()
-    cv2.imwrite("./real2_img/"+a+".jpg", frame)
+    cv2.imwrite("./final_real/"+a+".jpg", frame)
