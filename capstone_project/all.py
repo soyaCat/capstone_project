@@ -107,9 +107,14 @@ def find_robot(arr):
     data_collector = set(data_collector)
     data_collector = list(data_collector)
     intersects_1 = np.array(data_collector)
-
-    center_axis_0 = np.min(intersects_0) + (np.max(intersects_0)-np.min(intersects_0))/2
-    center_axis_1 = np.min(intersects_1) + (np.max(intersects_1) - np.min(intersects_1))/2
+    try:
+        center_axis_0 = np.min(intersects_0) + (np.max(intersects_0)-np.min(intersects_0))/2
+        center_axis_1 = np.min(intersects_1) + (np.max(intersects_1) - np.min(intersects_1))/2
+    except Exception as e:
+        print(intersects_0)
+        print(intersects_1)
+        plt.imshow(arr)
+        plt.show()
 
     center_axis_0 = round(center_axis_0)
     center_axis_1 = round(center_axis_1)
@@ -141,24 +146,27 @@ def get_most_close_center_point(c_0, c_1, x_cell):
 
 def get_image_and_preprocess():
     #ret, frame = cap.read()
-    frame = cv2.imread("./real2_img/2.jpg")
-    frame = cv2.resize(frame, (440, 290), interpolation=cv2.INTER_LANCZOS4)
-    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    ret, img = cap.read()
+    img = cv2.resize(img, (410, 300), interpolation=cv2.INTER_LANCZOS4)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     result_s, seta = IMG_F.image_process(img)
     arr = np.array(result_s)
-    print(np.shape(arr))
+    addictive = 0
+    # print(seta)
+    if seta>1:
+        addictive = 1
+    elif seta<-1:
+        addictive = -1
+    return arr, addictive
 
-    return arr
-
-def move_robot(action):
+def move_robot(action, addictive):
     loop = asyncio.get_event_loop()
-    message = get_correct_vec(action)
+    message = get_correct_vec(action,addictive)
     loop.run_until_complete(send_message(message))
-
 
 def move_target_index_point(target_index, x_cell):
     while(1):
-        arr = get_image_and_preprocess()
+        arr, addictive = get_image_and_preprocess()
         _, _, c_0, c_1 = find_robot(arr)
         move_axis0 = c_0-x_cell[target_index][0]
         move_axis1 = c_1-x_cell[target_index][1]
@@ -171,18 +179,18 @@ def move_target_index_point(target_index, x_cell):
         elif abs(move_axis0)>abs(move_axis1):
             if move_axis0<0:
                 action = [1,0,1,0,0]
-                move_robot(action)
+                move_robot(action, addictive)
             else:
                 action = [1,1,0,0,0]
-                move_robot(action)
+                move_robot(action, addictive)
 
         else:
             if move_axis1<0:
                 action = [1,0,0,0,1]
-                move_robot(action)
+                move_robot(action, addictive)
             else:
                 action = [1,0,0,1,0]
-                move_robot(action)
+                move_robot(action, addictive)
 
 def get_new_target_index_from_move_target(move_target, target_index):
     if(move_target[0] == 1):
@@ -215,7 +223,7 @@ def get_DQN(arr, agent):
     move_target[action] = 1
     return move_target
 
-def get_correct_vec(action):
+def get_correct_vec(action, addictive):
     message = ""
     if action[1] == 1:
         message = "a"
@@ -226,10 +234,13 @@ def get_correct_vec(action):
     elif action[4] == 1:
         message = "w"
     else:
-        message = "s"
-    message = input()
+        message = 'p'
     left = 0
     right = 0
+    if addictive == 1:
+        left = 9
+    if addictive == -1:
+        right = 9
     message = message+str(left)+str(right)
     return message
 
@@ -260,7 +271,7 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(get_services(address))
 
-    arr = get_image_and_preprocess()
+    arr, addictive = get_image_and_preprocess()
     x_cell = get_cell_center_point(arr)
     _, _, c_0, c_1 = find_robot(arr)
     target_index = get_most_close_center_point(c_0, c_1, x_cell)
@@ -272,7 +283,7 @@ if __name__ == '__main__':
         move_target, target_index = get_new_target_index_from_move_target(move_target, target_index)
         print("target_index:", target_index)
         move_target_index_point(target_index, x_cell)
-        arr = get_image_and_preprocess()
+        arr, addictive = get_image_and_preprocess()
         move_target = get_DQN(arr, agent)
 
     loop.run_until_complete(disconnect())
